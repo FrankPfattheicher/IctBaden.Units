@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="PhoneNumbers" />
+      <ProjectReference Include="..\IctBaden.Units\IctBaden.Units.csproj" />
     </ItemGroup>
 
 </Project>

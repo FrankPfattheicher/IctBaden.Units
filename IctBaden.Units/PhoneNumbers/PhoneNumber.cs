@@ -308,6 +308,10 @@ namespace IctBaden.Units
             return parsedNumber;
         }
 
+        public string GetDialString(string dialingRule)
+        {
+            return GetDialString("", dialingRule);
+        }
         public string GetDialString(string lineAccess, string dialingRule)
         {
             var dialString = string.Empty;
