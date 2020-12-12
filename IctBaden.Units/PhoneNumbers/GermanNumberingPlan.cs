@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using IctBaden.Framework.Resource;
+using IctBaden.Units.PhoneNumbers;
 
 namespace IctBaden.Units
 {
@@ -10,7 +11,7 @@ namespace IctBaden.Units
         private static readonly object CodeListLock = new object();
 
         private static List<NumberingPlanEntry> _codeList;
-        public static List<NumberingPlanEntry> CodeList
+        public override List<NumberingPlanEntry> CodeList
         {
             get
             {
@@ -38,14 +39,14 @@ namespace IctBaden.Units
             }
         }
 
-        public override void ResolveInternationalDialling(ref PhoneNumber number, ref string text)
+        public override string ResolveInternationalDialling(string text)
         {
             var isInternationalDialling = new Regex("^ *0 *0 *(.*)$");
             var match = isInternationalDialling.Match(text);
             if (!match.Success)
-                return;
+                return text;
 
-            text = "+" + match.Groups[1].Value.Trim();
+            return "+" + match.Groups[1].Value.Trim();
         }
 
         public override bool Parse(ref PhoneNumber number, ref string text)

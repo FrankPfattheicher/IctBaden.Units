@@ -1,7 +1,13 @@
-﻿namespace IctBaden.Units
+namespace IctBaden.Units
 {
-    public static class PhoneNumberFormat
+    // ReSharper disable InconsistentNaming
+    public enum PhoneNumberFormat
     {
-        public const string E164 = "+EFG";
+        Default,
+        DIN_5008,
+        E_123,
+        Microsoft,
+        URI
     }
+    // ReSharper restore InconsistentNaming
 }

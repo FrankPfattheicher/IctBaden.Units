@@ -10,59 +10,23 @@ namespace IctBaden.Units
     {
         // http://de.wikipedia.org/wiki/Telefonnummer
 
-        private string _countryCode;
-        private string _countryName;
-        private string _areaCode;
-        private string _areaName;
-        private string _number;
-        private string _extension;
-        private bool _dialInternal;
-
-        public string CountryCode
-        {
-            get => _countryCode;
-            set => _countryCode = value;
-        }
-        public string CountryName
-        {
-            get => _countryName;
-            set => _countryName = value;
-        }
-        public string AreaCode
-        {
-            get => _areaCode;
-            set => _areaCode = value;
-        }
-        public string AreaName
-        {
-            get => _areaName;
-            set => _areaName = value;
-        }
-        public string Number
-        {
-            get => _number;
-            set => _number = value;
-        }
-        public string Extension
-        {
-            get => _extension;
-            set => _extension = value;
-        }
-        public bool DialInternal
-        {
-            get => _dialInternal;
-            set => _dialInternal = value;
-        }
+        public string CountryCode { get; internal set; }
+        public string CountryName { get; internal set; }
+        public string AreaCode { get; internal set; }
+        public string AreaName { get; internal set; }
+        public string Number { get; private set; }
+        public string Extension { get; private set; }
+        public bool DialInternal { get; private set; }
 
         public PhoneNumber()
         {
-            _countryCode = string.Empty;
-            _countryName = string.Empty;
-            _areaCode = string.Empty;
-            _areaName = string.Empty;
-            _number = string.Empty;
-            _extension = string.Empty;
-            _dialInternal = false;
+            CountryCode = string.Empty;
+            CountryName = string.Empty;
+            AreaCode = string.Empty;
+            AreaName = string.Empty;
+            Number = string.Empty;
+            Extension = string.Empty;
+            DialInternal = false;
         }
         public PhoneNumber(string text)
         {
@@ -70,33 +34,51 @@ namespace IctBaden.Units
                 return;
 
             var init = Parse(text);
-            _countryCode = init.CountryCode;
-            _areaCode = init.AreaCode;
-            _number = init.Number;
-            _extension = init.Extension;
-            _dialInternal = init.DialInternal;
+            CountryCode = init.CountryCode;
+            AreaCode = init.AreaCode;
+            Number = init.Number;
+            Extension = init.Extension;
+            DialInternal = init.DialInternal;
         }
         public PhoneNumber(string countryCode, string areaCode, string number, string extension, bool dialInternal)
         {
-            _countryCode = countryCode;
-            _countryName = string.Empty;
-            _areaCode = areaCode;
-            _areaName = string.Empty;
-            _number = number;
-            _extension = extension;
-            _dialInternal = dialInternal;
+            CountryCode = countryCode;
+            CountryName = string.Empty;
+            AreaCode = areaCode;
+            AreaName = string.Empty;
+            Number = number;
+            Extension = extension;
+            DialInternal = dialInternal;
         }
         public void Clear()
         {
-            _countryCode = string.Empty;
-            _countryName = string.Empty;
-            _areaCode = string.Empty;
-            _areaName = string.Empty;
-            _number = string.Empty;
-            _extension = string.Empty;
-            _dialInternal = false;
+            CountryCode = string.Empty;
+            CountryName = string.Empty;
+            AreaCode = string.Empty;
+            AreaName = string.Empty;
+            Number = string.Empty;
+            Extension = string.Empty;
+            DialInternal = false;
         }
 
+        public static PhoneNumber TryParse(string text)
+        {
+            var countryCode = CurrentCultureLocation.CountryCode; 
+            var localParser = NumberingPlanFactory.GetNumberingPlan(CurrentCultureLocation.CountryName);
+            text = localParser?.ResolveInternationalDialling(text);
+            foreach (var numberingPlanEntry in localParser.CodeList)
+            {
+                var areaCode = numberingPlanEntry.Code;
+                var pattern = new Regex($@"^\+?{countryCode}{areaCode}([0-9]+)$");                
+                var match = pattern.Match(text);
+                if (match.Success)
+                {
+                    return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
+                }
+            }
+            return null;
+        }
+        
         public DialTypes DialType
         {
             get
@@ -109,9 +91,9 @@ namespace IctBaden.Units
             }
         }
 
-        public bool IsEmpty => string.IsNullOrEmpty(_areaCode) &&
-                               string.IsNullOrEmpty(_number) &&
-                               string.IsNullOrEmpty(_extension);
+        public bool IsEmpty => string.IsNullOrEmpty(AreaCode) &&
+                               string.IsNullOrEmpty(Number) &&
+                               string.IsNullOrEmpty(Extension);
 
         public static string ValidateSeparators(string text)
         {
@@ -169,7 +151,7 @@ namespace IctBaden.Units
         {
             get
             {
-                var name = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+                var name = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName.ToUpper();
                 var code = InternationalNumberingPlan.GetCountryCodeByName(name);
                 return new PhoneNumber(code, "", "", "", false) { CountryName = name };
             }
@@ -187,7 +169,7 @@ namespace IctBaden.Units
 
             var localParser = NumberingPlanFactory.GetNumberingPlan(InternationalNumberingPlan.GetNameByCountryCode(defaultLocation.CountryCode));
 
-            localParser?.ResolveInternationalDialling(ref parsedNumber, ref text);
+            text = localParser?.ResolveInternationalDialling(text);
 
             if (InternationalNumberingPlan.Parse(ref parsedNumber, ref text))
             {
@@ -249,7 +231,7 @@ namespace IctBaden.Units
             if ((extDelimiter != ' ') && delimiters.ContainsKey(extDelimiter) && (delimiters[extDelimiter] == 1))
             {
                 var extDelimiterPos = text.LastIndexOf(extDelimiter);
-                parsedNumber._extension = text.Substring(extDelimiterPos + 1);
+                parsedNumber.Extension = text.Substring(extDelimiterPos + 1);
                 text = text.Substring(0, extDelimiterPos);
                 text = Trim(text);
             }
@@ -289,10 +271,10 @@ namespace IctBaden.Units
             {
                 text = text.Replace(pair.Key.ToString(), "");
             }
-            parsedNumber._number = text;
-            parsedNumber._dialInternal = string.IsNullOrEmpty(parsedNumber._countryCode) && string.IsNullOrEmpty(parsedNumber._areaCode) && string.IsNullOrEmpty(parsedNumber._number) && !string.IsNullOrEmpty(parsedNumber._extension);
+            parsedNumber.Number = text;
+            parsedNumber.DialInternal = string.IsNullOrEmpty(parsedNumber.CountryCode) && string.IsNullOrEmpty(parsedNumber.AreaCode) && string.IsNullOrEmpty(parsedNumber.Number) && !string.IsNullOrEmpty(parsedNumber.Extension);
 
-            if (!parsedNumber._dialInternal)
+            if (!parsedNumber.DialInternal)
             {
                 if (string.IsNullOrEmpty(parsedNumber.AreaCode) && !string.IsNullOrEmpty(defaultLocation.AreaCode))
                 {
@@ -315,25 +297,14 @@ namespace IctBaden.Units
         public string GetDialString(string lineAccess, string dialingRule)
         {
             var dialString = string.Empty;
-            if (!_dialInternal)
+            if (!DialInternal)
                 dialString = lineAccess;
             dialString += dialingRule;
-            dialString = dialString.Replace("E", _countryCode);
-            dialString = dialString.Replace("F", _areaCode);
-            dialString = dialString.Replace("G", _number + _extension);
+            dialString = dialString.Replace("E", CountryCode);
+            dialString = dialString.Replace("F", AreaCode);
+            dialString = dialString.Replace("G", Number + Extension);
             return dialString;
         }
-
-        // ReSharper disable InconsistentNaming
-        public enum PhoneNumberFormat
-        {
-            Default,
-            DIN_5008,
-            E_123,
-            Microsoft,
-            URI
-        }
-        // ReSharper restore InconsistentNaming
 
         public override string ToString()
         {
@@ -342,57 +313,57 @@ namespace IctBaden.Units
         public string ToString(PhoneNumberFormat format)
         {
             // TODO: implement and use IPhoneNumberFormatter
-            var formatedString = string.IsNullOrEmpty(_countryCode) ? string.Empty : "+";
+            var formattedString = string.IsNullOrEmpty(CountryCode) ? string.Empty : "+";
 
             switch (format)
             {
                 case PhoneNumberFormat.Default:
-                    if (string.IsNullOrEmpty(_number) && string.IsNullOrEmpty(_extension))
+                    if (string.IsNullOrEmpty(Number) && string.IsNullOrEmpty(Extension))
                         return string.Empty;
-                    formatedString += _countryCode + _areaCode + _number + _extension;
+                    formattedString += CountryCode + AreaCode + Number + Extension;
                     break;
                 case PhoneNumberFormat.DIN_5008:
-                    formatedString += _countryCode;
-                    if (!string.IsNullOrEmpty(_countryCode) && !string.IsNullOrEmpty(_areaCode))
-                        formatedString += " ";
-                    formatedString += _areaCode;
-                    if (!string.IsNullOrEmpty(_areaCode) && !string.IsNullOrEmpty(_number))
-                        formatedString += " ";
-                    formatedString += _number + "-" + _extension;
+                    formattedString += CountryCode;
+                    if (!string.IsNullOrEmpty(CountryCode) && !string.IsNullOrEmpty(AreaCode))
+                        formattedString += " ";
+                    formattedString += AreaCode;
+                    if (!string.IsNullOrEmpty(AreaCode) && !string.IsNullOrEmpty(Number))
+                        formattedString += " ";
+                    formattedString += Number + "-" + Extension;
                     break;
                 case PhoneNumberFormat.E_123:
-                    formatedString += _countryCode;
-                    if (!string.IsNullOrEmpty(_countryCode) && !string.IsNullOrEmpty(_areaCode))
-                        formatedString += " ";
-                    formatedString += _areaCode;
-                    if (!string.IsNullOrEmpty(_areaCode) && !string.IsNullOrEmpty(_number))
-                        formatedString += " ";
-                    formatedString += _number + _extension;
+                    formattedString += CountryCode;
+                    if (!string.IsNullOrEmpty(CountryCode) && !string.IsNullOrEmpty(AreaCode))
+                        formattedString += " ";
+                    formattedString += AreaCode;
+                    if (!string.IsNullOrEmpty(AreaCode) && !string.IsNullOrEmpty(Number))
+                        formattedString += " ";
+                    formattedString += Number + Extension;
                     break;
                 case PhoneNumberFormat.Microsoft:
-                    formatedString += _countryCode;
-                    if (!string.IsNullOrEmpty(_countryCode) && !string.IsNullOrEmpty(_areaCode))
-                        formatedString += " ";
-                    if (!string.IsNullOrEmpty(_areaCode))
-                        formatedString += "(" + _areaCode + ")";
-                    if (!string.IsNullOrEmpty(_areaCode) && !string.IsNullOrEmpty(_number))
-                        formatedString += " ";
-                    formatedString += _number + _extension;
+                    formattedString += CountryCode;
+                    if (!string.IsNullOrEmpty(CountryCode) && !string.IsNullOrEmpty(AreaCode))
+                        formattedString += " ";
+                    if (!string.IsNullOrEmpty(AreaCode))
+                        formattedString += "(" + AreaCode + ")";
+                    if (!string.IsNullOrEmpty(AreaCode) && !string.IsNullOrEmpty(Number))
+                        formattedString += " ";
+                    formattedString += Number + Extension;
                     break;
                 case PhoneNumberFormat.URI:
-                    formatedString += _countryCode;
-                    if (!string.IsNullOrEmpty(_countryCode) && !string.IsNullOrEmpty(_areaCode))
-                        formatedString += "-";
-                    formatedString += _areaCode;
-                    if (!string.IsNullOrEmpty(_areaCode) && !string.IsNullOrEmpty(_number))
-                        formatedString += "-";
-                    formatedString += _number + _extension;
+                    formattedString += CountryCode;
+                    if (!string.IsNullOrEmpty(CountryCode) && !string.IsNullOrEmpty(AreaCode))
+                        formattedString += "-";
+                    formattedString += AreaCode;
+                    if (!string.IsNullOrEmpty(AreaCode) && !string.IsNullOrEmpty(Number))
+                        formattedString += "-";
+                    formattedString += Number + Extension;
                     break;
                 default:
                     Debug.Print("Invalid PhoneNumberFormat");
                     break;
             }
-            return formatedString;
+            return formattedString;
         }
 
     }
