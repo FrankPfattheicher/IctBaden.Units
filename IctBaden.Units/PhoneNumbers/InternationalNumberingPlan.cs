@@ -1,4 +1,6 @@
-﻿namespace IctBaden.Units
+﻿using System;
+
+namespace IctBaden.Units
 {
     internal static class InternationalNumberingPlan
     {
@@ -27,8 +29,10 @@
             for (var ix = 0; ix < CodeList.GetLength(0); ix++)
             {
                 var country = CodeList[ix, 1];
-                if (country == name)
+                if (string.Compare(country, name, StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
                     return CodeList[ix, 0].Substring(1);
+                }
             }
 
             return string.Empty;
