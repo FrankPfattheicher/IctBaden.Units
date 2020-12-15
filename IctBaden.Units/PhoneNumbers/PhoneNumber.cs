@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -61,11 +62,19 @@ namespace IctBaden.Units
             DialInternal = false;
         }
 
-        public static PhoneNumber TryParse(string text)
+        public static PhoneNumber TryParse(string text) => TryParse(text, CurrentCultureLocation);
+        
+        public static PhoneNumber TryParse(string text, PhoneNumber location)
         {
-            var countryCode = CurrentCultureLocation.CountryCode; 
-            var localParser = NumberingPlanFactory.GetNumberingPlan(CurrentCultureLocation.CountryName);
-            text = localParser?.ResolveInternationalDialling(text);
+            var countryCode = location.CountryCode; 
+            var localParser = NumberingPlanFactory.GetNumberingPlan(location.CountryName);
+            if (localParser == null)
+            {
+                throw new NotSupportedException($"Numbering plan for {location.CountryName} not supported.");
+            }
+            
+            text = localParser.ResolveInternationalDialling(text);
+            // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
             foreach (var numberingPlanEntry in localParser.CodeList)
             {
                 var areaCode = numberingPlanEntry.Code;
@@ -76,6 +85,8 @@ namespace IctBaden.Units
                     return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
                 }
             }
+            
+            
             return null;
         }
         
