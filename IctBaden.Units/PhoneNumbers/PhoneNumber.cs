@@ -31,7 +31,7 @@ namespace IctBaden.Units
         }
         public PhoneNumber(string text)
         {
-            if (!IsValid(text))
+            if (!IsValidFormat(text))
                 return;
 
             var init = Parse(text);
@@ -137,7 +137,7 @@ namespace IctBaden.Units
             return text;
         }
 
-        public bool Valid
+        public bool IsValid
         {
             get
             {
@@ -148,7 +148,7 @@ namespace IctBaden.Units
                 return true;
             }
         }
-        public static bool IsValid(string number)
+        public static bool IsValidFormat(string number)
         {
             return Regex.IsMatch(ValidateSeparators(number), @"^(\+[0-9]+)?[0-9 -/\(\)]+$");
         }

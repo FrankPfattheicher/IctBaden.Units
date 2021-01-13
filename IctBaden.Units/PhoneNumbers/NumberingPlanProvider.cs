@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IctBaden.Units.PhoneNumbers
+namespace IctBaden.Units
 {
     internal abstract class NumberingPlanProvider
     {

@@ -1,6 +1,4 @@
-﻿using IctBaden.Units.PhoneNumbers;
-
-namespace IctBaden.Units
+﻿namespace IctBaden.Units
 {
     internal static class NumberingPlanFactory
     {
