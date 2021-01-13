@@ -21,18 +21,17 @@ namespace IctBaden.Units
 
                     _codeList = new List<NumberingPlanEntry>();
                     var germanNumberingPlanDef = ResourceLoader.LoadString("GermanNumberingPlan.tsv");
-                    using (var loader = new StringReader(germanNumberingPlanDef))
+                    using var loader = new StringReader(germanNumberingPlanDef);
+                    while (true)
                     {
-                        while (true)
-                        {
-                            var line = loader.ReadLine();
-                            if (string.IsNullOrEmpty(line))
-                                break;
-                            var entry = line.Split('\t');
-                            if (entry.Length == 2)
-                                _codeList.Add(new NumberingPlanEntry(entry[0], entry[1]));
-                        }
+                        var line = loader.ReadLine();
+                        if (string.IsNullOrEmpty(line))
+                            break;
+                        var entry = line.Split('\t');
+                        if (entry.Length == 2)
+                            _codeList.Add(new NumberingPlanEntry(entry[0], entry[1]));
                     }
+
                     return _codeList;
                 }
             }

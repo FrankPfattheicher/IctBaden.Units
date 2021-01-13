@@ -1,54 +1,37 @@
 ﻿using System;
+using System.Linq;
+
+// ReSharper disable CommentTypo
 
 namespace IctBaden.Units
 {
     internal static class InternationalNumberingPlan
     {
-        private static string[,] _codeList;
+        private static NationalNumberingPlan[] _codeList;
 
-        private static string[,] CodeList
+        private static NationalNumberingPlan[] CodeList
         {
             get
             {
                 if (_codeList != null)
                     return _codeList;
 
-                _codeList = new[,]
-                    //   code  iso-name
+                _codeList = new NationalNumberingPlan[]
+                    //   E.164 numeric country code  iso-name
                     {
-                        {"+49", "DE"},
-                        {"+44", "UK"},
-                        {"+1", "NANP"}  // Nordamerikanischer Nummerierungsplan
+                        new NationalNumberingPlan("DE", "49"),
+                        new NationalNumberingPlan("UK", "44"),
+                        new NationalNumberingPlan("NANP", "1")  // Nordamerikanischer Nummerierungsplan
                     };
                 return _codeList;
             }
         }
 
-        public static string GetCountryCodeByName(string name)
-        {
-            for (var ix = 0; ix < CodeList.GetLength(0); ix++)
-            {
-                var country = CodeList[ix, 1];
-                if (string.Compare(country, name, StringComparison.InvariantCultureIgnoreCase) == 0)
-                {
-                    return CodeList[ix, 0].Substring(1);
-                }
-            }
+        public static string GetCountryCodeByName(string name) => CodeList
+            .FirstOrDefault(c => string.Compare(c.IsoName, name, StringComparison.InvariantCultureIgnoreCase) == 0)?.CountryCode ?? string.Empty;
 
-            return string.Empty;
-        }
-
-        public static string GetNameByCountryCode(string countryCode)
-        {
-            for (var ix = 0; ix < CodeList.GetLength(0); ix++)
-            {
-                var code = CodeList[ix, 0].Substring(1);
-                if (code == countryCode)
-                    return CodeList[ix, 1];
-            }
-
-            return string.Empty;
-        }
+        public static string GetNameByCountryCode(string countryCode) => CodeList
+            .FirstOrDefault(c => c.CountryCode == countryCode)?.IsoName ?? string.Empty;
 
         public static bool Parse(ref PhoneNumber number, ref string text)
         {
@@ -57,13 +40,13 @@ namespace IctBaden.Units
 
             for (var ix = 0; ix < CodeList.GetLength(0); ix++)
             {
-                var code = CodeList[ix, 0];
-                if (!text.StartsWith(code))
+                var numberingPlan = CodeList[ix];
+                if (!text.StartsWith(numberingPlan.CountryCode))
                     continue;
 
-                text = text.Substring(code.Length).Trim();
-                number.CountryCode = code.Substring(1);
-                number.CountryName = CodeList[ix, 1];
+                text = text.Substring(numberingPlan.CountryCode.Length).Trim();
+                number.CountryCode = numberingPlan.CountryCode;
+                number.CountryName = numberingPlan.IsoName;
                 return true;
             }
 

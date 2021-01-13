@@ -72,8 +72,8 @@ namespace IctBaden.Units
             {
                 throw new NotSupportedException($"Numbering plan for {location.CountryName} not supported.");
             }
-            
             text = localParser.ResolveInternationalDialling(text);
+            
             // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
             foreach (var numberingPlanEntry in localParser.CodeList)
             {
@@ -84,10 +84,17 @@ namespace IctBaden.Units
                 {
                     return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
                 }
+                
+                pattern = new Regex($@"{areaCode}([0-9]+)$");                
+                match = pattern.Match(text);
+                if (match.Success)
+                {
+                    return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
+                }
+
             }
-            
-            
-            return null;
+
+            return Parse(text, location);
         }
         
         public DialTypes DialType
