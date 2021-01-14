@@ -11,12 +11,12 @@ namespace IctBaden.Units
     {
         // http://de.wikipedia.org/wiki/Telefonnummer
 
-        public string CountryCode { get; internal set; }
-        public string CountryName { get; internal set; }
-        public string AreaCode { get; internal set; }
-        public string AreaName { get; internal set; }
-        public string Number { get; private set; }
-        public string Extension { get; private set; }
+        public string? CountryCode { get; internal set; }
+        public string? CountryName { get; internal set; }
+        public string? AreaCode { get; internal set; }
+        public string? AreaName { get; internal set; }
+        public string? Number { get; private set; }
+        public string? Extension { get; private set; }
         public bool DialInternal { get; private set; }
 
         public PhoneNumber()
@@ -41,7 +41,7 @@ namespace IctBaden.Units
             Extension = init.Extension;
             DialInternal = init.DialInternal;
         }
-        public PhoneNumber(string countryCode, string areaCode, string number, string extension, bool dialInternal)
+        public PhoneNumber(string? countryCode, string? areaCode, string? number, string? extension, bool dialInternal)
         {
             CountryCode = countryCode;
             CountryName = string.Empty;
@@ -78,14 +78,14 @@ namespace IctBaden.Units
             foreach (var numberingPlanEntry in localParser.CodeList)
             {
                 var areaCode = numberingPlanEntry.Code;
-                var pattern = new Regex($@"^\+?{countryCode}{areaCode}([0-9]+)$");                
+                var pattern = new Regex($@"^+?{countryCode}{areaCode}([0-9]+)$");                
                 var match = pattern.Match(text);
                 if (match.Success)
                 {
                     return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
                 }
                 
-                pattern = new Regex($@"{areaCode}([0-9]+)$");                
+                pattern = new Regex($@"^{areaCode}([0-9]+)$");                
                 match = pattern.Match(text);
                 if (match.Success)
                 {
@@ -185,13 +185,19 @@ namespace IctBaden.Units
             var parsedNumber = new PhoneNumber();
             text = ValidateSeparators(text);
 
-            var localParser = NumberingPlanFactory.GetNumberingPlan(InternationalNumberingPlan.GetNameByCountryCode(defaultLocation.CountryCode));
+            var localParser = NumberingPlanFactory
+                .GetNumberingPlan(InternationalNumberingPlan
+                    .GetNameByCountryCode(defaultLocation.CountryCode));
 
-            text = localParser?.ResolveInternationalDialling(text);
-
-            if (InternationalNumberingPlan.Parse(ref parsedNumber, ref text))
+            if (localParser != null)
             {
-                localParser = NumberingPlanFactory.GetNumberingPlan(parsedNumber.CountryName);
+                text = localParser.ResolveInternationalDialling(text);
+            }
+
+            var intl = InternationalNumberingPlan.Parse(ref text); 
+            if (intl != null)
+            {
+                localParser = NumberingPlanFactory.GetNumberingPlan(intl.CountryName);
             }
 
             if (string.IsNullOrEmpty(parsedNumber.AreaCode))

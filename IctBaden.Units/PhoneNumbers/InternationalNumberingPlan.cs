@@ -7,50 +7,50 @@ namespace IctBaden.Units
 {
     internal static class InternationalNumberingPlan
     {
-        private static NationalNumberingPlan[] _codeList;
+        private static NationalNumberingPlan[]? _nationalPlans;
 
-        private static NationalNumberingPlan[] CodeList
+        private static NationalNumberingPlan[] NationalPlans
         {
             get
             {
-                if (_codeList != null)
-                    return _codeList;
+                if (_nationalPlans != null)
+                    return _nationalPlans;
 
-                _codeList = new NationalNumberingPlan[]
+                _nationalPlans = new[]
                     //   E.164 numeric country code  iso-name
                     {
                         new NationalNumberingPlan("DE", "49"),
                         new NationalNumberingPlan("UK", "44"),
+                        new NationalNumberingPlan("FR", "33"),
                         new NationalNumberingPlan("NANP", "1")  // Nordamerikanischer Nummerierungsplan
                     };
-                return _codeList;
+                return _nationalPlans;
             }
         }
 
-        public static string GetCountryCodeByName(string name) => CodeList
+        public static string GetCountryCodeByName(string? name) => NationalPlans
             .FirstOrDefault(c => string.Compare(c.IsoName, name, StringComparison.InvariantCultureIgnoreCase) == 0)?.CountryCode ?? string.Empty;
 
-        public static string GetNameByCountryCode(string countryCode) => CodeList
+        public static string GetNameByCountryCode(string? countryCode) => NationalPlans
             .FirstOrDefault(c => c.CountryCode == countryCode)?.IsoName ?? string.Empty;
 
-        public static bool Parse(ref PhoneNumber number, ref string text)
+        public static PhoneNumber? Parse(ref string text)
         {
             if (!text.StartsWith("+"))
-                return false;
-
-            for (var ix = 0; ix < CodeList.GetLength(0); ix++)
+                return null;
+            
+            text = text.Substring(1);
+            foreach (var numberingPlan in NationalPlans)
             {
-                var numberingPlan = CodeList[ix];
                 if (!text.StartsWith(numberingPlan.CountryCode))
                     continue;
 
                 text = text.Substring(numberingPlan.CountryCode.Length).Trim();
-                number.CountryCode = numberingPlan.CountryCode;
-                number.CountryName = numberingPlan.IsoName;
-                return true;
+                return new PhoneNumber(numberingPlan.CountryCode, null, null, null, false)
+                    {CountryName = numberingPlan.IsoName};
             }
 
-            return false;
+            return null;
         }
     }
 }

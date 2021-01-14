@@ -2,15 +2,14 @@
 {
     internal static class NumberingPlanFactory
     {
-        public static NumberingPlanProvider GetNumberingPlan(string isoNumberingPlanCountryCode)
-        {
-            switch (isoNumberingPlanCountryCode.ToUpper())
-            {
-                case "DE":
-                    return new GermanNumberingPlan();
-            }
-
-            return null;
-        }
+        public static NumberingPlanProvider? GetNumberingPlan(string? isoCountryName) =>
+            string.IsNullOrEmpty(isoCountryName)
+                ? null
+                : isoCountryName.ToUpper() switch
+                {
+                    "DE" => new GermanNumberingPlan(),
+                    _ => null
+                };
+        
     }
 }

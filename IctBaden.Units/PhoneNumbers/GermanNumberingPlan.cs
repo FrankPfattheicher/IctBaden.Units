@@ -9,7 +9,7 @@ namespace IctBaden.Units
     {
         private static readonly object CodeListLock = new object();
 
-        private static List<NumberingPlanEntry> _codeList;
+        private static List<NumberingPlanEntry>? _codeList;
         public override List<NumberingPlanEntry> CodeList
         {
             get
