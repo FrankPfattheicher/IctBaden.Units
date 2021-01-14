@@ -197,6 +197,8 @@ namespace IctBaden.Units
             var intl = InternationalNumberingPlan.Parse(ref text); 
             if (intl != null)
             {
+                parsedNumber.CountryCode = intl.CountryCode;
+                parsedNumber.CountryName = intl.CountryName;
                 localParser = NumberingPlanFactory.GetNumberingPlan(intl.CountryName);
             }
 
