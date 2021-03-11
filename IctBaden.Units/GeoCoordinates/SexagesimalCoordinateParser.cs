@@ -91,6 +91,27 @@ namespace IctBaden.Units
                 return coordinate;
             }
 
+            // 37 25 19.07
+            match = new Regex("^([0-9]+)\\s*([0-9]+)\\s*([0-9]+(\\.([0-9]+))?)\\s*([NSOW])?$").Match(text);
+            if (match.Success)
+            {
+                var degrees = int.Parse(match.Groups[1].Value, NumberStyles.Integer | NumberStyles.AllowLeadingSign);
+                var minutes = int.Parse(match.Groups[2].Value, NumberStyles.Integer);
+                var seconds = double.Parse(match.Groups[3].Value, NumberStyles.Float, CultureInfo.InvariantCulture);
+                if (!string.IsNullOrEmpty(match.Groups[6].Value) && "SW".Contains(match.Groups[6].Value))
+                {
+                    degrees = -degrees;
+                }
+
+                var coordinate = new SexagesimalCoordinate(degrees, minutes, seconds)
+                {
+                    Type = "NS".Contains(match.Groups[6].Value)
+                        ? SexagesimalCoordinate.CoordinateType.Latitude
+                        : SexagesimalCoordinate.CoordinateType.Longitude
+                };
+                return coordinate;
+            }
+
             return new SexagesimalCoordinate(0.0);
         }
     }

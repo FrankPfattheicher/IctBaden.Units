@@ -46,6 +46,19 @@ namespace IctBaden.Units.Tests.GeoCoordinates
         }
 
         [Fact]
+        public void GradMinutesSecondsNumbersOnlyShouldBeParsable()
+        {
+            const string text = "37 25 19,07";
+
+            var coordinate = SexagesimalCoordinateParser.Parse(text);
+        
+            Assert.Equal(37, coordinate.Degrees);
+            Assert.Equal(25, coordinate.Minutes);
+            Assert.Equal(19, (int)coordinate.Seconds);
+            Assert.Equal(SexagesimalCoordinate.CoordinateType.Latitude, coordinate.Type);
+        }
+
+        [Fact]
         public void DecimalGradWithSignShouldBeParsable()
         {
             var source = new SexagesimalCoordinate(-37, 25, 19.07);
