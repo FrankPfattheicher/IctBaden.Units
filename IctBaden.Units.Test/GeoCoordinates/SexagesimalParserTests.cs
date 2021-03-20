@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using Xunit;
 
-namespace IctBaden.Units.Tests.GeoCoordinates
+namespace IctBaden.Units.Test.GeoCoordinates
 {
     
     public class SexagesimalParserTests

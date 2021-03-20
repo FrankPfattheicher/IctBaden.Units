@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace IctBaden.Units.Tests.PhoneNumbers
+namespace IctBaden.Units.Test.PhoneNumbers
 {
     public class FormatPhoneNumberTests
     {

@@ -1,7 +1,7 @@
 using IctBaden.Units.TimeSpans;
 using Xunit;
 
-namespace IctBaden.Units.Tests.TimeSpans
+namespace IctBaden.Units.Test.TimeSpans
 {
     public class TimeSpanParseTests
     {
