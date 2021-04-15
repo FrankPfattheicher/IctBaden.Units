@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Units", "IctBaden.Units\IctBaden.Units.csproj", "{7575FFDE-5722-4094-BC7C-46D006144C8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Units.Tests", "IctBaden.Units.Tests\IctBaden.Units.Tests.csproj", "{AFCFC476-B560-415D-B2A5-1C70D5AB9798}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Units.Test", "IctBaden.Units.Test\IctBaden.Units.Test.csproj", "{AFCFC476-B560-415D-B2A5-1C70D5AB9798}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,6 +4,16 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <LangVersion>8</LangVersion>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Unit Handling Library</Title>
+        <Authors>Frank Pfattheicher</Authors>
+        <Description>Currently supporting german phone numbers, geo coordinates anf time spans. Serialization and parsing</Description>
+        <Copyright>(C)2020-2021 ICTBaden GmbH</Copyright>
+        <PackageProjectUrl>https://github.com/FrankPfattheicher/IctBaden.Units</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/FrankPfattheicher/IctBaden.Units</RepositoryUrl>
+        <PackageTags>C# Units</PackageTags>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
