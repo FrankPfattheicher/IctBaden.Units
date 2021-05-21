@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace IctBaden.Units
@@ -29,6 +30,7 @@ namespace IctBaden.Units
             Extension = string.Empty;
             DialInternal = false;
         }
+
         public PhoneNumber(string text)
         {
             if (!IsValidFormat(text))
@@ -41,6 +43,7 @@ namespace IctBaden.Units
             Extension = init.Extension;
             DialInternal = init.DialInternal;
         }
+
         public PhoneNumber(string? countryCode, string? areaCode, string? number, string? extension, bool dialInternal)
         {
             CountryCode = countryCode;
@@ -51,6 +54,7 @@ namespace IctBaden.Units
             Extension = extension;
             DialInternal = dialInternal;
         }
+
         public void Clear()
         {
             CountryCode = string.Empty;
@@ -63,40 +67,40 @@ namespace IctBaden.Units
         }
 
         public static PhoneNumber TryParse(string text) => TryParse(text, CurrentCultureLocation);
-        
+
         public static PhoneNumber TryParse(string text, PhoneNumber location)
         {
-            var countryCode = location.CountryCode; 
+            var countryCode = location.CountryCode;
             var localParser = NumberingPlanFactory.GetNumberingPlan(location.CountryName);
             if (localParser == null)
             {
                 throw new NotSupportedException($"Numbering plan for {location.CountryName} not supported.");
             }
+
             text = localParser.ResolveInternationalDialling(text);
-            
+
             // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
             foreach (var numberingPlanEntry in localParser.CodeList)
             {
                 var areaCode = numberingPlanEntry.Code;
-                var pattern = new Regex($@"^+?{countryCode}{areaCode}([0-9]+)$");                
+                var pattern = new Regex($@"^+?{countryCode}{areaCode}([0-9]+)$");
                 var match = pattern.Match(text);
                 if (match.Success)
                 {
                     return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
                 }
-                
-                pattern = new Regex($@"^{areaCode}([0-9]+)$");                
+
+                pattern = new Regex($@"^{areaCode}([0-9]+)$");
                 match = pattern.Match(text);
                 if (match.Success)
                 {
                     return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
                 }
-
             }
 
             return Parse(text, location);
         }
-        
+
         public DialTypes DialType
         {
             get
@@ -116,10 +120,10 @@ namespace IctBaden.Units
         public static string ValidateSeparators(string text)
         {
             // Common dashes - replace with ascii minus
-            text = text.Replace("\x2012", "-");  // figure dash
-            text = text.Replace("\x2013", "-");  // en dash
-            text = text.Replace("\x2014", "-");  // em dash
-            text = text.Replace("\x2015", "-");  // horizontal bar
+            text = text.Replace("\x2012", "-"); // figure dash
+            text = text.Replace("\x2013", "-"); // en dash
+            text = text.Replace("\x2014", "-"); // em dash
+            text = text.Replace("\x2015", "-"); // horizontal bar
 
             // Unicode spaces - replace with ascii spaces
             text = text.Replace("\x00A0", " ");
@@ -150,11 +154,20 @@ namespace IctBaden.Units
             {
                 if (string.IsNullOrEmpty(Number) && string.IsNullOrEmpty(Extension))
                     return false;
-                if (string.IsNullOrEmpty(AreaCode) && !string.IsNullOrEmpty(CountryCode))
-                    return false;
-                return true;
+
+                var localParser = NumberingPlanFactory
+                    .GetNumberingPlan(InternationalNumberingPlan.GetNameByCountryCode(CountryName));
+
+                if (localParser == null)
+                {
+                    // no more checks possible
+                    return true;
+                }
+                
+                return !string.IsNullOrEmpty(AreaCode) || string.IsNullOrEmpty(CountryCode);
             }
         }
+
         public static bool IsValidFormat(string number)
         {
             return Regex.IsMatch(ValidateSeparators(number), @"^(\+[0-9]+)?[0-9 -/\(\)]+$");
@@ -171,7 +184,7 @@ namespace IctBaden.Units
             {
                 var name = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName.ToUpper();
                 var code = InternationalNumberingPlan.GetCountryCodeByName(name);
-                return new PhoneNumber(code, "", "", "", false) { CountryName = name };
+                return new PhoneNumber(code, "", "", "", false) {CountryName = name};
             }
         }
 
@@ -194,7 +207,7 @@ namespace IctBaden.Units
                 text = localParser.ResolveInternationalDialling(text);
             }
 
-            var intl = InternationalNumberingPlan.Parse(ref text); 
+            var intl = InternationalNumberingPlan.Parse(ref text);
             if (intl != null)
             {
                 parsedNumber.CountryCode = intl.CountryCode;
@@ -226,6 +239,7 @@ namespace IctBaden.Units
 
                         localParser?.Parse(ref parsedNumber, ref explicitAreaCode);
                     }
+
                     text = Trim(text);
                 }
             }
@@ -236,6 +250,7 @@ namespace IctBaden.Units
             {
                 extDelimiter = findExtDelimiter.Groups[1].Value[0];
             }
+
             // count all delimiters
             var delimiters = new Dictionary<char, int>();
 
@@ -286,6 +301,7 @@ namespace IctBaden.Units
                             parsedNumber.AreaCode = parsedNumber.AreaCode.Replace(pair2.Key.ToString(), "");
                         }
                     }
+
                     text = text.Substring(areaDelimiter + 1);
                     text = Trim(text);
                     break;
@@ -297,8 +313,12 @@ namespace IctBaden.Units
             {
                 text = text.Replace(pair.Key.ToString(), "");
             }
+
             parsedNumber.Number = text;
-            parsedNumber.DialInternal = string.IsNullOrEmpty(parsedNumber.CountryCode) && string.IsNullOrEmpty(parsedNumber.AreaCode) && string.IsNullOrEmpty(parsedNumber.Number) && !string.IsNullOrEmpty(parsedNumber.Extension);
+            parsedNumber.DialInternal = string.IsNullOrEmpty(parsedNumber.CountryCode) &&
+                                        string.IsNullOrEmpty(parsedNumber.AreaCode) &&
+                                        string.IsNullOrEmpty(parsedNumber.Number) &&
+                                        !string.IsNullOrEmpty(parsedNumber.Extension);
 
             if (!parsedNumber.DialInternal)
             {
@@ -307,12 +327,14 @@ namespace IctBaden.Units
                     parsedNumber.AreaCode = defaultLocation.AreaCode;
                     parsedNumber.AreaName = defaultLocation.AreaName;
                 }
+
                 if (string.IsNullOrEmpty(parsedNumber.CountryCode) && !string.IsNullOrEmpty(parsedNumber.AreaCode))
                 {
                     parsedNumber.CountryCode = defaultLocation.CountryCode;
                     parsedNumber.CountryName = defaultLocation.CountryName;
                 }
             }
+
             return parsedNumber;
         }
 
@@ -320,6 +342,7 @@ namespace IctBaden.Units
         {
             return GetDialString("", dialingRule);
         }
+
         public string GetDialString(string lineAccess, string dialingRule)
         {
             var dialString = string.Empty;
@@ -336,6 +359,7 @@ namespace IctBaden.Units
         {
             return ToString(PhoneNumberFormat.Default);
         }
+
         public string ToString(PhoneNumberFormat format)
         {
             // TODO: implement and use IPhoneNumberFormatter
@@ -389,8 +413,8 @@ namespace IctBaden.Units
                     Debug.Print("Invalid PhoneNumberFormat");
                     break;
             }
+
             return formattedString;
         }
-
     }
 }

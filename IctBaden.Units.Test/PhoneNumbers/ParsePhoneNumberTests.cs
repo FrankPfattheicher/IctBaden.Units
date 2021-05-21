@@ -51,7 +51,31 @@ namespace IctBaden.Units.Test.PhoneNumbers
             Assert.Equal("721", phone.AreaCode);
             Assert.Equal("49", phone.CountryCode);
         }
-        
+
+        [Fact]
+        public void FrenchNumberWithPlusShouldBeParsed()
+        {
+            const string number = "+33636854544";
+            
+            var phone = PhoneNumber.TryParse(number);
+
+            Assert.True(!phone.IsEmpty);
+            Assert.True(phone.IsValid);
+            Assert.Equal("33", phone.CountryCode);
+        }
+
+        [Fact]
+        public void UkNumberWithPlusShouldBeParsed()
+        {
+            const string number = "+441865824000";
+            
+            var phone = PhoneNumber.TryParse(number);
+
+            Assert.True(!phone.IsEmpty);
+            Assert.True(phone.IsValid);
+            Assert.Equal("44", phone.CountryCode);
+        }
+
         // [Fact]
         // public void NumberWithLeadingZerosButWithoutCountryCodeShouldBeParsed()
         // {
