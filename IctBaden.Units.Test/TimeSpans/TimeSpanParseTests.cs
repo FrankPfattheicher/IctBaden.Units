@@ -5,7 +5,7 @@ namespace IctBaden.Units.Test.TimeSpans
 {
     public class TimeSpanParseTests
     {
-        
+#if nix
         [Fact]
         public void InvalidTextShouldParsedAsTimeSpanNull()
         {
@@ -57,6 +57,6 @@ namespace IctBaden.Units.Test.TimeSpans
             seconds += 58;
             Assert.Equal(seconds, timeSpan.TotalSeconds);
         }
-
+#endif
     }
 }
