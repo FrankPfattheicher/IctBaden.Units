@@ -12,10 +12,10 @@ namespace IctBaden.Units.TimeSpans
             if (string.IsNullOrEmpty(text)) return result;
             
             //[ws][-]{ ss | d.hh:mm:ss[.ff] | hh:mm:ss[.ff] }[ws]
-            var negative = text.StartsWith("-");
+            var negative = text!.StartsWith("-");
             if (negative)
             {
-                text = text[1..];
+                text = text.Substring(1);
             }
             text = text.Trim();
 

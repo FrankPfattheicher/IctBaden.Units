@@ -5,7 +5,7 @@
         public static NumberingPlanProvider? GetNumberingPlan(string? isoCountryName) =>
             string.IsNullOrEmpty(isoCountryName)
                 ? null
-                : isoCountryName.ToUpper() switch
+                : isoCountryName!.ToUpper() switch
                 {
                     "DE" => new GermanNumberingPlan(),
                     _ => null

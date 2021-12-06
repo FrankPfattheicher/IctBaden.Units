@@ -42,9 +42,9 @@ namespace IctBaden.Units.SpecFlow.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "TimeSpanParser", "Parse second based TimeSpans given in natural text format\ni.e.:\n\"26\" \t\twhich mean" +
-                    "s seconds\n\"1:22\" \t\tminutes and seconds\n\"2:30:50\" \thours, minutes and seconds\n\"3." +
-                    "2:30:50\" days, hours, minutes and seconds", ProgrammingLanguage.CSharp, new string[] {
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "TimeSpanParser", "Parse second based TimeSpans given in natural text format\r\ni.e.:\r\n\"26\" \t\twhich me" +
+                    "ans seconds\r\n\"1:22\" \t\tminutes and seconds\r\n\"2:30:50\" \thours, minutes and seconds" +
+                    "\r\n\"3.2:30:50\" days, hours, minutes and seconds", ProgrammingLanguage.CSharp, new string[] {
                         "UnitTests"});
             testRunner.OnFeatureStart(featureInfo);
         }
