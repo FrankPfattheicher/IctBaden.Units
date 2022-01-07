@@ -8,7 +8,7 @@
         <Title>Unit Handling Library</Title>
         <Authors>Frank Pfattheicher</Authors>
         <Description>Currently supporting german phone numbers, geo coordinates anf time spans. Serialization and parsing</Description>
-        <Copyright>(C)2020-2021 ICTBaden GmbH</Copyright>
+        <Copyright>(C)2020-2022 ICTBaden GmbH</Copyright>
         <PackageProjectUrl>https://github.com/FrankPfattheicher/IctBaden.Units</PackageProjectUrl>
         <RepositoryUrl>https://github.com/FrankPfattheicher/IctBaden.Units</RepositoryUrl>
         <PackageTags>C# Units</PackageTags>
