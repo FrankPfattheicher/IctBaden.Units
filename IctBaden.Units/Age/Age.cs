@@ -10,7 +10,10 @@ namespace IctBaden.Units
         public int Months { get; private set; }
         public int Days { get; private set; }
 
+
+        public int TotalMonths => Years * 12 + Months;
         
+
         public Age(DateTime birthDay)
         {
             Count(birthDay);
