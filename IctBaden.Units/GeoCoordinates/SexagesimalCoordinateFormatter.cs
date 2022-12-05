@@ -19,17 +19,25 @@ namespace IctBaden.Units
         public static string ToLatString(this SexagesimalCoordinate latitude, string format = "")
         {
             var latChar = latitude.DecimalValue >= 0 ? "N" : "S";
-            switch (format)
+            var baseFormat = format.Length > 0
+                ? format.Substring(0, 1)
+                : "";
+            var extFormat = format.Length > 1
+                ? format.Substring(1)
+                : "";
+            switch (baseFormat)
             {
                 case "d":
-                    return $"{latitude}°";
+                    return $"{latitude.DecimalValue}°";
                 case "g":
-                    return $"{Math.Abs(latitude.Degrees)}° {latitude.Minutes}' {latitude.Seconds:F2}\" {latChar}";
+                    return string.IsNullOrEmpty(extFormat) 
+                        ? $"{Math.Abs(latitude.Degrees)}° {latitude.Minutes}' {latitude.Seconds:F2}\" {latChar}"
+                        : $"{Math.Abs(latitude.Degrees).ToString(extFormat)}° {latitude.Minutes.ToString(extFormat)}' {latitude.Seconds.ToString(extFormat + ".00")}\" {latChar}";
                 case "m":
                     return $"{Math.Abs(latitude.Degrees)}° {latitude.Minutes + latitude.Seconds / 60.0:F4}' {latChar}";
             }
 
-            return $"{latitude}";
+            return $"{latitude.DecimalValue}";
         }
         
         /// <summary>

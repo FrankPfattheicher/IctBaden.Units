@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <LangVersion>10</LangVersion>
+        <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>Unit Handling Library</Title>
@@ -18,10 +18,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="IctBaden.Framework" Version="1.4.5" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.23" />
-      <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.1" />
-      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
+      <PackageReference Include="IctBaden.Framework" Version="1.5.4" />
     </ItemGroup>
 
     <ItemGroup>
