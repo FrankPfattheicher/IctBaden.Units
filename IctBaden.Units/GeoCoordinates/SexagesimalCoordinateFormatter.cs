@@ -5,6 +5,14 @@ namespace IctBaden.Units
 {
     public static class SexagesimalCoordinateFormatter
     {
+        public static string ToString(this SexagesimalCoordinate coordinate, string format = "")
+        {
+            return coordinate.Type == SexagesimalCoordinate.CoordinateType.Latitude
+                ? ToLatString(coordinate, format)
+                : ToLongString(coordinate, format);
+        }
+
+        
         /// <summary>
         /// Format the given latitude
         /// Possible formats:
@@ -54,17 +62,25 @@ namespace IctBaden.Units
         public static string ToLongString(this SexagesimalCoordinate longitude, string format = "")
         {
             var longChar = longitude.DecimalValue >= 0 ? "O" : "W";
-            switch (format)
+            var baseFormat = format.Length > 0
+                ? format.Substring(0, 1)
+                : "";
+            var extFormat = format.Length > 1
+                ? format.Substring(1)
+                : "";
+            switch (baseFormat)
             {
                 case "d":
                     return $"{longitude}°";
                 case "g":
-                    return $"{Math.Abs(longitude.Degrees)}° {longitude.Minutes}' {longitude.Seconds:F2}\" {longChar}";
+                    return string.IsNullOrEmpty(extFormat) 
+                        ? $"{Math.Abs(longitude.Degrees)}° {longitude.Minutes}' {longitude.Seconds:F2}\" {longChar}"
+                        : $"{Math.Abs(longitude.Degrees).ToString(extFormat)}° {longitude.Minutes.ToString(extFormat)}' {longitude.Seconds.ToString(extFormat + ".00")}\" {longChar}";
                 case "m":
                     return $"{Math.Abs(longitude.Degrees)}° {longitude.Minutes + longitude.Seconds / 60.0:F4}' {longChar}";
             }
 
-            return $"{longitude}";
+            return $"{longitude.DecimalValue}";
         }
     }
 }
