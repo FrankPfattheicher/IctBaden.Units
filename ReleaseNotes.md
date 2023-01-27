@@ -1,4 +1,5 @@
 
+* 1.0.5	- 27.01.2023 TimeRanges and ISO 8601 dates
 * 1.0.4	- 06.12.2022 Format SexagesimalCoordinate ToString
 * 1.0.3	- 05.12.2022 Extended format for SexagesimalCoordinate with tests, package references removed
 * 1.0.2	- 06.12.2021 Age.

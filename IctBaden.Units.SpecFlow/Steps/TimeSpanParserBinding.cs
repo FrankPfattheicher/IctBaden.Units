@@ -1,6 +1,5 @@
 using System;
 using FluentAssertions;
-using IctBaden.Units.TimeSpans;
 using TechTalk.SpecFlow;
 
 namespace IctBaden.Units.SpecFlow.Steps

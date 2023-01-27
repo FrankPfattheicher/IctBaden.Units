@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace IctBaden.Units.TimeSpans
+namespace IctBaden.Units
 {
     public static class TimeSpanParser
     {
