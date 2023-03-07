@@ -178,6 +178,12 @@ namespace IctBaden.Units
             return text.Trim(' ', '-', '/');
         }
 
+        public static PhoneNumber GetCultureLocation(string twoLetterISOLanguageName)
+        {
+            var code = InternationalNumberingPlan.GetCountryCodeByName(twoLetterISOLanguageName);
+            return new PhoneNumber(code, "", "", "", false) {CountryName = twoLetterISOLanguageName};
+        }
+        
         public static PhoneNumber CurrentCultureLocation
         {
             get
