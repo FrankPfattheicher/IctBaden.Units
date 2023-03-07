@@ -21,6 +21,9 @@ namespace IctBaden.Units
 
                     _codeList = new List<NumberingPlanEntry>();
                     var germanNumberingPlanDef = ResourceLoader.LoadString("GermanNumberingPlan.tsv");
+                    if(germanNumberingPlanDef == null)
+                        return _codeList;
+                        
                     using var loader = new StringReader(germanNumberingPlanDef);
                     while (true)
                     {
