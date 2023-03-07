@@ -2,8 +2,7 @@ name: CI-master-nuget
 
 on: 
   push:
-    branches: 
-      - master
+    branches: [ main, master ]
 
 jobs:
   build:
