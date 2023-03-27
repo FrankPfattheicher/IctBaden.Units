@@ -1,4 +1,5 @@
 
+* 2.0.1	- 27.03.2023 Allow negative ages
 * 2.0.0	- 07.03.2023 Added GetCultureLocation, added culture info parameters
 * 
 * 1.0.5	- 27.01.2023 TimeRanges and ISO 8601 dates

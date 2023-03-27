@@ -42,5 +42,19 @@ public class AgeTests
         Assert.Equal(2, age.Months);
         Assert.Equal(4, age.Days);
     }
+ 
+ 
+     [Fact]
+     public void NegativeAgesShouldBeAccepted()
+     {
+         var age = new Units.Age(DateTime.Parse("12.10.2059", _culture), DateTime.Parse("2.3.2023", _culture));
+             
+         Assert.True(age.IsNegative);
+         Assert.Equal(36, age.Years);
+         Assert.Equal(7, age.Months);
+         Assert.Equal(10, age.Days);
+     }
+         
+
         
 }
