@@ -52,5 +52,4 @@ jobs:
         nuget pack ../IctBaden.Units.nuspec -BasePath . -Version $version
         
     - name: Publish NuGet
-      run: |
-        run: dotnet nuget push artifacts/*.nupkg --source https://www.nuget.org --api-key ${{ secrets.NugetKey }}
+      run: dotnet nuget push artifacts/*.nupkg --source https://www.nuget.org --api-key ${{ secrets.NugetKey }}
