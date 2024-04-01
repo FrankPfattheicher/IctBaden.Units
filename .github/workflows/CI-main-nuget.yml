@@ -55,4 +55,4 @@ jobs:
       run: |
         version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes.md)
         echo Version=$version
-        dotnet nuget push IctBaden.Units/bin/Release/*.nupkg --source https://www.nuget.org --api-key ${{ secrets.NugetKey }}
+        run: dotnet nuget push artifacts/*.nupkg --source https://www.nuget.org --api-key ${{ secrets.NugetKey }}
