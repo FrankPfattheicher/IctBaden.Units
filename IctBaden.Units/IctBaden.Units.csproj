@@ -1,24 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-        <LangVersion>10</LangVersion>
+        <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>Unit Handling Library</Title>
         <Authors>Frank Pfattheicher</Authors>
         <Description>Currently supporting german phone numbers, geo coordinates anf time spans. Serialization and parsing</Description>
-        <Copyright>(C)2020-2023 ICTBaden GmbH</Copyright>
+        <Copyright>(C)2020-2024 ICTBaden GmbH</Copyright>
         <PackageProjectUrl>https://github.com/FrankPfattheicher/IctBaden.Units</PackageProjectUrl>
         <RepositoryUrl>https://github.com/FrankPfattheicher/IctBaden.Units</RepositoryUrl>
         <PackageTags>C# Units</PackageTags>
         <AssemblyVersion>1.0.2</AssemblyVersion>
         <FileVersion>1.0.2</FileVersion>
         <PackageVersion>1.0.4</PackageVersion>
+        <TargetFrameworks>netcoreapp3.1;net8.0</TargetFrameworks>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="IctBaden.Framework" Version="2.0.2" />
+      <PackageReference Include="IctBaden.Framework" Version="3.2.1" />
+      <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
