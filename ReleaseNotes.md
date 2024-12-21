@@ -1,4 +1,5 @@
 
+* 2.2.2	- 21.12.2024 Added DialingRules.FromDialType
 * 2.2.1	- 21.12.2024 Added DialingRules
 * 2.2.0	- 21.12.2024 Packets updated, refactoring, GermanNumberingPlan with static CodeList
 
