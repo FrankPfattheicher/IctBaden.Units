@@ -1,4 +1,6 @@
 
+* 2.2.0	- 21.12.2024 Packets updated, refactoring, GermanNumberingPlan with static CodeList 
+
 * 2.1.0	- 27.04.2024 C#12, NET8, IDisposableAnalyzers
 
 * 2.0.0	- 07.03.2023 Added GetCultureLocation, added culture info parameters

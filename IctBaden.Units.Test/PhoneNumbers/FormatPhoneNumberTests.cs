@@ -4,11 +4,7 @@ namespace IctBaden.Units.Test.PhoneNumbers;
 
 public class FormatPhoneNumberTests
 {
-    private readonly PhoneNumber _location;
-    public FormatPhoneNumberTests()
-    {
-        _location = PhoneNumber.GetCultureLocation("DE");
-    }
+    private readonly PhoneNumber _location = PhoneNumber.GetCultureLocation("de");
 
     [Fact]
     public void FormatInternationalNumberShouldBeWithPlus()
@@ -29,7 +25,6 @@ public class FormatPhoneNumberTests
         phone = new PhoneNumber(_location, number3);
         text = phone.GetDialString("+EFG");
         Assert.Equal(expected, text);
-            
     }
         
     [Fact]
@@ -51,7 +46,6 @@ public class FormatPhoneNumberTests
         phone = new PhoneNumber(_location, number3);
         text = phone.GetDialString("+EFG");
         Assert.Equal(expected, text);
-            
     }
 
 }
