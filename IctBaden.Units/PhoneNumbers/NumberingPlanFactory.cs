@@ -1,15 +1,14 @@
-﻿namespace IctBaden.Units
+﻿using System.Globalization;
+
+namespace IctBaden.Units;
+
+internal static class NumberingPlanFactory
 {
-    internal static class NumberingPlanFactory
-    {
-        public static NumberingPlanProvider? GetNumberingPlan(string? isoCountryName) =>
-            string.IsNullOrEmpty(isoCountryName)
-                ? null
-                : isoCountryName!.ToUpper() switch
-                {
-                    "DE" => new GermanNumberingPlan(),
-                    _ => null
-                };
+    public static NumberingPlanProvider? GetNumberingPlan(string isoCountryName) =>
+        isoCountryName.ToLower(CultureInfo.InvariantCulture) switch
+            {
+                "de" => new GermanNumberingPlanProvider(),
+                _ => null
+            };
         
-    }
 }

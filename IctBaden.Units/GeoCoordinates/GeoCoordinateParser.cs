@@ -1,13 +1,11 @@
-﻿namespace IctBaden.Units
+﻿namespace IctBaden.Units;
+
+public static class GeoCoordinateParser
 {
-    public static class GeoCoordinateParser
+
+    public static GeoCoordinate Parse(string text)
     {
-
-        public static GeoCoordinate Parse(string text)
-        {
-            //TODO
-            return new GeoCoordinate(0.0, 0.0);
-        }
-
+        return new GeoCoordinate(0.0, 0.0);
     }
+
 }

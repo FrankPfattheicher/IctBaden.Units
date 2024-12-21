@@ -1,10 +1,9 @@
-﻿namespace IctBaden.Units
+﻿namespace IctBaden.Units;
+
+public enum DialTypes
 {
-    public enum DialTypes
-    {
-        Internal,
-        Local,
-        LongDistance,
-        International
-    }
+    Internal,
+    Local,
+    LongDistance,
+    International
 }

@@ -1,10 +1,12 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace IctBaden.Units;
 
 public static class SexagesimalCoordinateParser
 {
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     public static SexagesimalCoordinate Parse(string text)
     {
         text = text

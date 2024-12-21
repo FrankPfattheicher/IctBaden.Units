@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -13,12 +14,12 @@ public class PhoneNumber
 {
     // http://de.wikipedia.org/wiki/Telefonnummer
 
-    public string? CountryCode { get; internal set; }
-    public string? CountryName { get; internal set; }
-    public string? AreaCode { get; internal set; }
-    public string? AreaName { get; internal set; }
-    public string? Number { get; private set; }
-    public string? Extension { get; private set; }
+    public string CountryCode { get; internal set; }
+    public string CountryName { get; internal set; }
+    public string AreaCode { get; internal set; }
+    public string AreaName { get; internal set; }
+    public string Number { get; private set; }
+    public string Extension { get; private set; }
     public bool DialInternal { get; private set; }
 
     public PhoneNumber()
@@ -33,6 +34,7 @@ public class PhoneNumber
     }
 
     public PhoneNumber(string text)
+        : this()
     {
         if (!IsValidFormat(text))
             return;
@@ -47,11 +49,12 @@ public class PhoneNumber
     }
 
     public PhoneNumber(PhoneNumber location, string text)
+        : this()
     {
         if (!IsValidFormat(text))
             return;
 
-        var init = Parse(text, location);
+        var init = TryParse(text, location);
         CountryCode = init.CountryCode;
         AreaCode = init.AreaCode;
         Number = init.Number;
@@ -59,7 +62,7 @@ public class PhoneNumber
         DialInternal = init.DialInternal;
     }
 
-    public PhoneNumber(string? countryCode, string? areaCode, string? number, string? extension, bool dialInternal)
+    public PhoneNumber(string countryCode, string areaCode, string number, string extension, bool dialInternal)
     {
         CountryCode = countryCode;
         CountryName = string.Empty;
@@ -102,14 +105,14 @@ public class PhoneNumber
             var match = pattern.Match(text);
             if (match.Success)
             {
-                return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
+                return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, string.Empty, dialInternal: false);
             }
 
             pattern = new Regex($@"^{areaCode}([0-9]+)$");
             match = pattern.Match(text);
             if (match.Success)
             {
-                return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, "", false);
+                return new PhoneNumber(countryCode, areaCode, match.Groups[1].Value, string.Empty, dialInternal: false);
             }
         }
 
@@ -183,29 +186,28 @@ public class PhoneNumber
         }
     }
 
-    public static bool IsValidFormat(string number)
-    {
-        return Regex.IsMatch(ValidateSeparators(number), @"^(\+[0-9]+)?[0-9 -/\(\)]+$");
-    }
+    public static bool IsValidFormat(string number) =>
+        !string.IsNullOrEmpty(number) &&
+        Regex.IsMatch(ValidateSeparators(number), @"^(\+[0-9]+)?[0-9 -/\(\)]+$");
 
     public static string Trim(string text)
     {
         return text.Trim(' ', '-', '/');
     }
 
-    public static PhoneNumber GetCultureLocation(string twoLetterISOLanguageName)
+    public static PhoneNumber GetCultureLocation(string twoLetterIsoLanguageName)
     {
-        var code = InternationalNumberingPlan.GetCountryCodeByName(twoLetterISOLanguageName);
-        return new PhoneNumber(code, "", "", "", false) {CountryName = twoLetterISOLanguageName};
+        var code = InternationalNumberingPlan.GetCountryCodeByName(twoLetterIsoLanguageName);
+        return new PhoneNumber(code, string.Empty, string.Empty, string.Empty, dialInternal: false) {CountryName = twoLetterIsoLanguageName};
     }
         
     public static PhoneNumber CurrentCultureLocation
     {
         get
         {
-            var name = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName.ToUpper();
+            var name = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName.ToLower(CultureInfo.InvariantCulture);
             var code = InternationalNumberingPlan.GetCountryCodeByName(name);
-            return new PhoneNumber(code, "", "", "", false) {CountryName = name};
+            return new PhoneNumber(code, string.Empty, string.Empty, string.Empty, dialInternal: false) {CountryName = name};
         }
     }
 
@@ -214,6 +216,7 @@ public class PhoneNumber
         return Parse(text, CurrentCultureLocation);
     }
 
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     public static PhoneNumber Parse(string text, PhoneNumber defaultLocation)
     {
         var parsedNumber = new PhoneNumber();
@@ -247,14 +250,14 @@ public class PhoneNumber
             var foundAreaCode = new Regex(@"^\(([0-9 ]+)\)").Match(text);
             if (foundAreaCode.Success)
             {
-                if (foundAreaCode.Groups[1].Value == "0")
+                if (string.Equals(foundAreaCode.Groups[1].Value, "0", StringComparison.OrdinalIgnoreCase))
                 {
-                    text = text.Replace("(0)", "").Trim();
+                    text = text.Replace("(0)", string.Empty).Trim();
                 }
                 else
                 {
                     var explicitAreaCode = foundAreaCode.Groups[1].Value;
-                    explicitAreaCode = explicitAreaCode.Replace(" ", "");
+                    explicitAreaCode = explicitAreaCode.Replace(" ", string.Empty);
                     text = text.Substring(foundAreaCode.Groups[0].Value.Length);
                     parsedNumber.AreaCode = explicitAreaCode;
 
@@ -290,7 +293,9 @@ public class PhoneNumber
             }
         }
 
-        if ((extDelimiter != ' ') && delimiters.ContainsKey(extDelimiter) && (delimiters[extDelimiter] == 1))
+        if (extDelimiter != ' ' && 
+            delimiters.ContainsKey(extDelimiter) && 
+            delimiters[extDelimiter] == 1)
         {
             var extDelimiterPos = text.LastIndexOf(extDelimiter);
             parsedNumber.Extension = text.Substring(extDelimiterPos + 1);
@@ -319,7 +324,7 @@ public class PhoneNumber
                 {
                     foreach (var pair2 in delimiters)
                     {
-                        parsedNumber.AreaCode = parsedNumber.AreaCode.Replace(pair2.Key.ToString(), "");
+                        parsedNumber.AreaCode = parsedNumber.AreaCode.Replace(pair2.Key.ToString(), string.Empty);
                     }
                 }
 
@@ -332,7 +337,7 @@ public class PhoneNumber
         // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var pair in delimiters)
         {
-            text = text.Replace(pair.Key.ToString(), "");
+            text = text.Replace(pair.Key.ToString(), string.Empty);
         }
 
         parsedNumber.Number = text;
@@ -361,7 +366,7 @@ public class PhoneNumber
 
     public string GetDialString(string dialingRule)
     {
-        return GetDialString("", dialingRule);
+        return GetDialString(string.Empty, dialingRule);
     }
 
     public string GetDialString(string lineAccess, string dialingRule)
@@ -381,11 +386,11 @@ public class PhoneNumber
         return ToString(PhoneNumberFormat.Default);
     }
 
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     public string ToString(PhoneNumberFormat format)
     {
-        // TODO: implement and use IPhoneNumberFormatter
         var formattedString = string.IsNullOrEmpty(CountryCode) ? string.Empty : "+";
-
+        
         switch (format)
         {
             case PhoneNumberFormat.Default:
@@ -434,7 +439,7 @@ public class PhoneNumber
                 Debug.Print("Invalid PhoneNumberFormat");
                 break;
         }
-
+        
         return formattedString;
     }
 }
