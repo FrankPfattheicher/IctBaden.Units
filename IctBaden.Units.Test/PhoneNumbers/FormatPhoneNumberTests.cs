@@ -13,17 +13,17 @@ public class FormatPhoneNumberTests
             
         const string number1 = "+4972140989106";
         var phone = new PhoneNumber(_location, number1);
-        var text = phone.GetDialString("+EFG");
+        var text = phone.GetDialString(DialingRules.International);
         Assert.Equal(expected, text);
 
         const string number2 = "4972140989106";
         phone = new PhoneNumber(_location, number2);
-        text = phone.GetDialString("+EFG");
+        text = phone.GetDialString(DialingRules.International);
         Assert.Equal(expected, text);
 
         const string number3 = "072140989106";
         phone = new PhoneNumber(_location, number3);
-        text = phone.GetDialString("+EFG");
+        text = phone.GetDialString(DialingRules.International);
         Assert.Equal(expected, text);
     }
         
@@ -34,17 +34,17 @@ public class FormatPhoneNumberTests
             
         const string number1 = "+491727207196";
         var phone = new PhoneNumber(_location, number1);
-        var text = phone.GetDialString("+EFG");
+        var text = phone.GetDialString(DialingRules.International);
         Assert.Equal(expected, text);
 
         const string number2 = "491727207196";
         phone = new PhoneNumber(_location, number2);
-        text = phone.GetDialString("+EFG");
+        text = phone.GetDialString(DialingRules.International);
         Assert.Equal(expected, text);
 
         const string number3 = "01727207196";
         phone = new PhoneNumber(_location, number3);
-        text = phone.GetDialString("+EFG");
+        text = phone.GetDialString(DialingRules.International);
         Assert.Equal(expected, text);
     }
 
